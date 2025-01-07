@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager_app/screens/auth/reset_password.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'data/repositories/auth_repository.dart';
 import 'screens/auth/login_screen.dart';
@@ -24,14 +25,18 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => LoginScreen(
-                emailController: TextEditingController(),
-                passwordController: TextEditingController(),
-              ),
+            emailController: TextEditingController(),
+            passwordController: TextEditingController(),
+          ),
           '/register': (context) => RegisterScreen(
-                emailController: TextEditingController(),
-                passwordController: TextEditingController(),
-                confirmPasswordController: TextEditingController(),
-              ),
+            emailController: TextEditingController(),
+            passwordController: TextEditingController(),
+            confirmPasswordController: TextEditingController(),
+          ),
+          '/reset-password': (context) => ResetPasswordScreen(
+            emailController: TextEditingController(), 
+            newPasswordController: TextEditingController()
+          ),
         },
       ),
     );

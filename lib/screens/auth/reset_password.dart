@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/auth/auth_bloc.dart';
 
-class LoginScreen extends StatelessWidget {
+class ResetPasswordScreen extends StatelessWidget {
   final TextEditingController emailController;
-  final TextEditingController passwordController;
+  final TextEditingController newPasswordController;
 
-  const LoginScreen({
+  const ResetPasswordScreen({
     super.key,
     required this.emailController,
-    required this.passwordController,
+    required this.newPasswordController,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Reset Password'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -30,8 +30,8 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              controller: newPasswordController,
+              decoration: const InputDecoration(labelText: 'New Password'),
               obscureText: true,
             ),
             const SizedBox(height: 32),
@@ -39,8 +39,9 @@ class LoginScreen extends StatelessWidget {
               listener: (context, state) {
                 if (state is AuthSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Login Successful!')),
+                    const SnackBar(content: Text('Password Reset Successful!')),
                   );
+                  Navigator.pop(context); // Navigate back to Login Screen
                 } else if (state is AuthFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
@@ -54,31 +55,22 @@ class LoginScreen extends StatelessWidget {
                 return ElevatedButton(
                   onPressed: () {
                     final email = emailController.text.trim();
-                    final password = passwordController.text.trim();
-                    if (email.isEmpty || password.isEmpty) {
+                    final newPassword = newPasswordController.text.trim();
+
+                    if (email.isEmpty || newPassword.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please fill in all fields')),
                       );
                       return;
                     }
-                    context.read<AuthBloc>().add(LoginEvent(email, password));
+
+                    context
+                        .read<AuthBloc>()
+                        .add(ResetPasswordEvent(email, newPassword));
                   },
-                  child: const Text('Login'),
+                  child: const Text('Reset Password'),
                 );
               },
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/register');
-              },
-              child: const Text('Register'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/reset-password');
-              },
-              child: const Text('Forgot Password?'),
             ),
           ],
         ),
