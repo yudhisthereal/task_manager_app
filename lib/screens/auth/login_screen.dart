@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -14,6 +15,10 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Controllers to hold the error messages
+    final emailError = ValueNotifier<String?>(null);
+    final passwordError = ValueNotifier<String?>(null);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -23,18 +28,38 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
+            // Email TextField with error handling
+            ValueListenableBuilder<String?>(
+              valueListenable: emailError,
+              builder: (context, error, child) {
+                return TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: error,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                );
+              },
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
+            
+            // Password TextField with error handling
+            ValueListenableBuilder<String?>(
+              valueListenable: passwordError,
+              builder: (context, error, child) {
+                return TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    errorText: error,
+                  ),
+                  obscureText: true,
+                );
+              },
             ),
             const SizedBox(height: 32),
+            
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthSuccess) {
@@ -55,13 +80,38 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () {
                     final email = emailController.text.trim();
                     final password = passwordController.text.trim();
-                    if (email.isEmpty || password.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please fill in all fields')),
-                      );
-                      return;
+
+                    // Validate email and password
+                    bool isValid = true;
+
+                    // Validate email
+                    if (email.isEmpty) {
+                      emailError.value = 'Email must be filled';
+                      isValid = false;
+                    } else if (!EmailValidator.validate(email)) {
+                      emailError.value = 'Invalid email format';
+                      isValid = false;
+                    } else {
+                      emailError.value = null;
                     }
-                    context.read<AuthBloc>().add(LoginEvent(email, password));
+
+                    // Validate password
+                    if (password.isEmpty) {
+                      passwordError.value = 'Password must be filled';
+                      isValid = false;
+                    } else {
+                      passwordError.value = null;
+                    }
+
+                    if (isValid) {
+                      // Proceed with login
+                      context.read<AuthBloc>().add(LoginEvent(email, password));
+                    } else {
+                      // Show error snackbars if needed
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please correct the errors')),
+                      );
+                    }
                   },
                   child: const Text('Login'),
                 );
