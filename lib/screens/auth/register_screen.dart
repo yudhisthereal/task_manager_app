@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -16,6 +17,11 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Controllers that hold input error state
+    final emailError = ValueNotifier<String?>(null);
+    final passwordError = ValueNotifier<String?>(null);
+    final confirmPasswordError = ValueNotifier<String?>(null);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
@@ -25,23 +31,44 @@ class RegisterScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
+            ValueListenableBuilder<String?>(
+              valueListenable: emailError, 
+              builder: (context, error, child) {
+                return TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    errorText: error
+                    ),
+                  keyboardType: TextInputType.emailAddress,
+                );
+              }),
             const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
+            ValueListenableBuilder<String?>(
+              valueListenable: passwordError, 
+              builder: (context, error, child) {
+                return TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password', 
+                    errorText: error
+                    ),
+                  obscureText: true,
+                );
+              }),
             const SizedBox(height: 16),
-            TextField(
-              controller: confirmPasswordController,
-              decoration: const InputDecoration(labelText: 'Confirm Password'),
-              obscureText: true,
-            ),
+            ValueListenableBuilder(
+              valueListenable: confirmPasswordError, 
+              builder: (context, error, child) {
+                return TextField(
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    errorText: error
+                    ),
+                  obscureText: true,
+                );
+              }),
             const SizedBox(height: 32),
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
@@ -64,26 +91,44 @@ class RegisterScreen extends StatelessWidget {
                   onPressed: () {
                     final email = emailController.text.trim();
                     final password = passwordController.text.trim();
-                    final confirmPassword =
-                        confirmPasswordController.text.trim();
+                    final confirmPassword = confirmPasswordController.text.trim();
 
-                    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please fill in all fields')),
-                      );
-                      return;
+                    bool isValid = true;
+                    
+                    // Validate email
+                    if (email.isEmpty) {
+                      emailError.value = 'Email must be filled';
+                      isValid = false;
+                    } else if (!EmailValidator.validate(email)) {
+                      emailError.value = 'Invalid email format';
+                      isValid = false;
+                    } else {
+                      emailError.value = null;
                     }
 
-                    if (password != confirmPassword) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Passwords do not match')),
-                      );
-                      return;
+                    // Validate password
+                    if (password.isEmpty) {
+                      passwordError.value = 'Password must be filled';
+                      confirmPasswordError.value = null;
+                      isValid = false;
+                    } else if (password != confirmPassword) {
+                      passwordError.value = null;
+                      confirmPasswordError.value = 'Passwords do not match';
+                      isValid = false;
+                    } else {
+                      passwordError.value = null;
+                      confirmPasswordError.value = null;
                     }
 
-                    context
-                        .read<AuthBloc>()
-                        .add(RegisterEvent(email, password));
+                    if (isValid) {
+                      context
+                          .read<AuthBloc>()
+                          .add(RegisterEvent(email, password));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please correct the errors'))
+                      );
+                    }
                   },
                   child: const Text('Register'),
                 );
