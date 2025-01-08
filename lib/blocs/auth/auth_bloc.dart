@@ -48,8 +48,6 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthSuccess extends AuthState {}
-
 class AuthFailure extends AuthState {
   final String message;
 
@@ -58,6 +56,11 @@ class AuthFailure extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class LoginSuccess extends AuthState {}
+class RegistrationSuccess extends AuthState {}
+class ResetPasswordSuccess extends AuthState {}
+
 
 // BLoC
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -73,7 +76,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await authRepository.registerUser(event.email, event.password);
-      emit(AuthSuccess());
+      emit(RegistrationSuccess());
     } catch (e) {
       emit(AuthFailure("Registration Failed"));
     }
@@ -85,7 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user =
           await authRepository.loginUser(event.email, event.password);
       if (user != null) {
-        emit(AuthSuccess());
+        emit(LoginSuccess());
       } else {
         emit(AuthFailure("Invalid Credentials"));
       }
@@ -101,7 +104,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final success =
           await authRepository.resetPassword(event.email, event.newPassword);
       if (success) {
-        emit(AuthSuccess());
+        emit(ResetPasswordSuccess());
       } else {
         emit(AuthFailure("Password Reset Failed"));
       }

@@ -72,7 +72,7 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 32),
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is AuthSuccess) {
+                if (state is RegistrationSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Registration Successful!')),
                   );

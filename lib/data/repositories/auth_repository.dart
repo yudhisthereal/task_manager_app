@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../local/database_helper.dart';
 
 class AuthRepository {
@@ -15,6 +17,7 @@ class AuthRepository {
   // Login an existing user
   Future<Map<String, dynamic>?> loginUser(String email, String password) async {
     final db = await dbHelper.database;
+    debugPrint('DATABASE PATH: ${db.path}');
     final result = await db.query('users',
         where: 'email = ? AND password = ?', whereArgs: [email, password]);
     return result.isNotEmpty ? result.first : null;

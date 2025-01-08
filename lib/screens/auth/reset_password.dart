@@ -37,7 +37,7 @@ class ResetPasswordScreen extends StatelessWidget {
             const SizedBox(height: 32),
             BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
-                if (state is AuthSuccess) {
+                if (state is ResetPasswordSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Password Reset Successful!')),
                   );
