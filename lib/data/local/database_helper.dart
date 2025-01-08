@@ -71,6 +71,7 @@ class DatabaseHelper {
   }
 
   Future<int> updateTask(Task task) async {
+    debugPrint('[UPDATE TASK] TASK ID: ${task.id}');
     final db = await database;
     return await db.update(
       'tasks',

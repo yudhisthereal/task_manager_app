@@ -91,6 +91,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 }
 
                 final task = Task(
+                  id: isEditing ? widget.task?.id : null,
                   userId: _userId!,
                   title: title,
                   description: description.isEmpty ? null : description,

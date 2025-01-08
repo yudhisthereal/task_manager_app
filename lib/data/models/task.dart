@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Task {
   final int? id; // SQLite auto-incremented ID
   final int userId;
@@ -47,12 +45,10 @@ class Task {
   }
 
   factory Task.fromMap(Map<String, dynamic> map) {
-    debugPrint('[DUE DATE]: ${map['dueDate']}');
-
     final String dueDateStr = map['dueDate'];
 
     DateTime? dueDate;
-    
+
     if (dueDateStr.isNotEmpty) {
       dueDate = DateTime.parse(map['dueDate'] as String);
     }
