@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager_app/blocs/auth/auth_bloc.dart';
 import 'package:task_manager_app/blocs/tasks/task_bloc.dart';
 import 'package:task_manager_app/data/models/task.dart';
 
@@ -40,6 +41,13 @@ class TaskListScreenState extends State<TaskListScreen> {
               Navigator.pushNamed(context, '/add-edit-task');
             },
             icon: const Icon(Icons.add),
+          ),
+          IconButton(
+            onPressed: () async {
+              context.read<AuthBloc>().add(LogoutEvent());
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+            icon: const Icon(Icons.exit_to_app),
           ),
         ],
       ),

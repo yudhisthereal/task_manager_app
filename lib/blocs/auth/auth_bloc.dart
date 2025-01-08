@@ -63,6 +63,7 @@ class AuthFailure extends AuthState {
 class LoginSuccess extends AuthState {}
 class RegistrationSuccess extends AuthState {}
 class ResetPasswordSuccess extends AuthState {}
+class LogoutSuccess extends AuthState {}
 
 
 // BLoC
