@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager_app/blocs/tasks/task_bloc.dart';
@@ -17,7 +19,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
 
   @override
@@ -25,37 +26,77 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(AuthRepository(), SharedPrefsHelper())
+          create: (context) =>
+              AuthBloc(AuthRepository(), SharedPrefsHelper()),
         ),
         BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc(TaskRepository())
-        )
+          create: (context) => TaskBloc(TaskRepository()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Task Manager App',
         theme: ThemeData(primarySwatch: Colors.blue),
-        initialRoute: '/',
+        home: const InitialScreen(),
         routes: {
-          '/': (context) => LoginScreen(
-            emailController: TextEditingController(),
-            passwordController: TextEditingController(),
-          ),
+          '/login': (context) => LoginScreen(
+                emailController: TextEditingController(),
+                passwordController: TextEditingController(),
+              ),
           '/register': (context) => RegisterScreen(
-            emailController: TextEditingController(),
-            passwordController: TextEditingController(),
-            confirmPasswordController: TextEditingController(),
-          ),
+                emailController: TextEditingController(),
+                passwordController: TextEditingController(),
+                confirmPasswordController: TextEditingController(),
+              ),
           '/reset-password': (context) => ResetPasswordScreen(
-            emailController: TextEditingController(), 
-            newPasswordController: TextEditingController()
-          ),
-          '/tasks' : (context) => const TaskListScreen(),
+                emailController: TextEditingController(),
+                newPasswordController: TextEditingController(),
+              ),
+          '/tasks': (context) => const TaskListScreen(),
           '/add-edit-task': (context) => AddEditTaskScreen(
-            task: ModalRoute.of(context)?.settings.arguments as Task?
-          )
+                task: ModalRoute.of(context)?.settings.arguments as Task?,
+              ),
         },
       ),
     );
+  }
+}
+
+class InitialScreen extends StatelessWidget {
+  const InitialScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _checkUserLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final bool isLoggedIn = snapshot.data ?? false;
+
+        if (context.mounted) {
+          if (isLoggedIn) {
+            // Navigate directly to the task list
+            Future.microtask(() => Navigator.pushReplacementNamed(context, '/tasks'));
+          } else {
+            // Navigate to the login screen
+            Future.microtask(() => Navigator.pushReplacementNamed(context, '/login'));
+          }
+        }
+
+        // Placeholder widget while navigation happens
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Future<bool> _checkUserLoginStatus() async {
+    final SharedPrefsHelper prefs = SharedPrefsHelper();
+    final userId = await prefs.getUserId();
+    return userId != null;
   }
 }
