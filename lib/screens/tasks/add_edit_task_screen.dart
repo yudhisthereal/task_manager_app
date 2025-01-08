@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager_app/blocs/tasks/task_bloc.dart';
+import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
 import 'package:task_manager_app/data/models/task.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
@@ -16,15 +17,25 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   bool _isCompleted = false;
+  int? _userId;
 
   @override
   void initState() {
     super.initState();
+    _loadUserId();
     if (widget.task != null) {
       _titleController.text = widget.task!.title;
       _descriptionController.text = widget.task!.description ?? '';
       _isCompleted = widget.task!.isCompleted;
     }
+  }
+
+  Future<void> _loadUserId() async {
+    final SharedPrefsHelper sharedPrefsHelper = SharedPrefsHelper();
+    final userId = await sharedPrefsHelper.getUserId();
+    setState(() {
+      _userId = userId;
+    });
   }
 
   @override
@@ -62,6 +73,13 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
+                if (_userId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User ID not loaded yet')),
+                  );
+                  return;
+                }
+
                 final title = _titleController.text.trim();
                 final description = _descriptionController.text.trim();
 
@@ -73,8 +91,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 }
 
                 final task = Task(
-                  id: widget.task?.id ?? DateTime.now().millisecondsSinceEpoch,
-                  userId: widget.task?.userId ?? 0, // Replace 0 with actual userId
+                  userId: _userId!,
                   title: title,
                   description: description.isEmpty ? null : description,
                   isCompleted: _isCompleted,

@@ -21,7 +21,6 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'task_manager.db');
-    debugPrint('Database path is "$path"');
     return await openDatabase(
       path,
       version: 1,
@@ -39,20 +38,15 @@ class DatabaseHelper {
       )
     ''');
 
-    
-    await db.execute('''
-      DROP TABLE IF EXISTS tasks;
-    ''');
-
     // Tasks Table
     await db.execute('''
-      CREATE TABLE tasks(
+      CREATE TABLE tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId INTEGER NOT,
+        userId INTEGER NOT NULL,
         title TEXT NOT NULL,
-        description TEXT NOT NULL,
+        description TEXT,
         isCompleted INTEGER NOT NULL,
-        dueDate TEXT NOT NULL
+        dueDate TEXT
       )
     ''');
   }
@@ -60,7 +54,9 @@ class DatabaseHelper {
   // CRUD methods
   Future<int> insertTask(Task task) async {
     final db = await database;
-    return await db.insert('tasks', task.toMap());
+    final  Map<String, dynamic> taskMap = task.toMap();
+    debugPrint('[DBHELPER INSERT] TASK ID: ${taskMap['id']}');
+    return await db.insert('tasks', taskMap);
   }
 
   Future<List<Task>> getTasksByUser(int userId) async {

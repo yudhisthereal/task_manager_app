@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
 import 'package:task_manager_app/data/models/task.dart';
@@ -90,6 +91,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         emit(TaskLoaded(tasks));
       } catch (e) {
         emit(TaskError('Failed to fetch tasks'));
+        debugPrint('[FETCH TASK ERROR]: $e');
       }
     } else {
       emit(TaskError('No logged-in user'));
@@ -102,6 +104,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       add(FetchTasksEvent());
     } catch (e) {
       emit(TaskError('Failed to add task'));
+      debugPrint('[ADD TASK ERROR]: $e');
     }
   }
 
