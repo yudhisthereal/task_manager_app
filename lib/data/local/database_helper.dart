@@ -64,7 +64,8 @@ class DatabaseHelper {
     final maps = await db.query(
       'tasks',
       where: 'userId = ?',
-      whereArgs: [userId]
+      whereArgs: [userId],
+      orderBy: 'isCompleted ASC'
     );
 
     return maps.map((map) => Task.fromMap(map)).toList();

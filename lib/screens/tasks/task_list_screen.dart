@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_manager_app/blocs/tasks/task_bloc.dart';
+import 'package:task_manager_app/data/models/task.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -51,13 +52,24 @@ class TaskListScreenState extends State<TaskListScreen> {
                 return ListTile(
                   title: Text(task.title),
                   subtitle: Text(task.description ?? ''),
-                  trailing: Checkbox(
-                    value: task.isCompleted,
-                    onChanged: (value) {
-                      context.read<TaskBloc>().add(UpdateTaskEvent(
-                            task.copyWith(isCompleted: value ?? false),
-                          ));
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: task.isCompleted,
+                        onChanged: (value) {
+                          context.read<TaskBloc>().add(UpdateTaskEvent(
+                                task.copyWith(isCompleted: value ?? false),
+                              ));
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _confirmDelete(context, task);
+                        },
+                      ),
+                    ],
                   ),
                   onTap: () {
                     Navigator.pushNamed(
@@ -76,6 +88,33 @@ class TaskListScreenState extends State<TaskListScreen> {
           }
         },
       ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, Task task) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Delete Task'),
+          content: const Text('Are you sure you want to delete this task?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<TaskBloc>().add(RemoveTaskEvent(task.id!, task.userId));
+                Navigator.pop(ctx); // Close the dialog
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
