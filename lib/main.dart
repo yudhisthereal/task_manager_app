@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
 import 'package:task_manager_app/screens/auth/reset_password.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'data/repositories/auth_repository.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(AuthRepository()),
+      create: (context) => AuthBloc(AuthRepository(), SharedPrefsHelper()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Task Manager App',

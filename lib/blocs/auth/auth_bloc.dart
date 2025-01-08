@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
 import '../../data/repositories/auth_repository.dart';
 
 // Events
@@ -27,6 +28,8 @@ class LoginEvent extends AuthEvent {
   @override
   List<Object?> get props => [email, password];
 }
+
+class LogoutEvent extends AuthEvent {}
 
 class ResetPasswordEvent extends AuthEvent {
   final String email;
@@ -65,11 +68,13 @@ class ResetPasswordSuccess extends AuthState {}
 // BLoC
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
+  final SharedPrefsHelper sharedPrefsHelper;
 
-  AuthBloc(this.authRepository) : super(AuthInitial()) {
+  AuthBloc(this.authRepository, this.sharedPrefsHelper) : super(AuthInitial()) {
     on<RegisterEvent>(_onRegister);
     on<LoginEvent>(_onLogin);
     on<ResetPasswordEvent>(_onResetPassword);
+    on<LogoutEvent>(_onLogout);
   }
 
   void _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
@@ -88,6 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user =
           await authRepository.loginUser(event.email, event.password);
       if (user != null) {
+        await sharedPrefsHelper.saveUserId(user['id']);
         emit(LoginSuccess());
       } else {
         emit(AuthFailure("Invalid Credentials"));
@@ -95,6 +101,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       emit(AuthFailure("Login Failed"));
     }
+  }
+
+  void _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
+    await sharedPrefsHelper.clearUserId();
+    emit(AuthInitial());
   }
 
   void _onResetPassword(
