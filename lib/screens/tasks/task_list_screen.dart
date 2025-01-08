@@ -11,10 +11,11 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class TaskListScreenState extends State<TaskListScreen> {
+  bool _showDeleteButtons = false; // State to control the visibility of delete buttons
+
   @override
   void initState() {
     super.initState();
-    // Trigger FetchTasksEvent when the screen is created
     context.read<TaskBloc>().add(FetchTasksEvent());
   }
 
@@ -24,6 +25,16 @@ class TaskListScreenState extends State<TaskListScreen> {
       appBar: AppBar(
         title: const Text('Your Tasks'),
         actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _showDeleteButtons = !_showDeleteButtons; // Toggle the delete button visibility
+              });
+            },
+            icon: Icon(
+              _showDeleteButtons ? Icons.visibility_off : Icons.visibility,
+            ),
+          ),
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, '/add-edit-task');
@@ -63,12 +74,13 @@ class TaskListScreenState extends State<TaskListScreen> {
                               ));
                         },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _confirmDelete(context, task);
-                        },
-                      ),
+                      if (_showDeleteButtons) // Conditionally render delete button
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            _confirmDelete(context, task);
+                          },
+                        ),
                     ],
                   ),
                   onTap: () {
