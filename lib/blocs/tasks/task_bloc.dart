@@ -1,73 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager_app/blocs/tasks/task_event.dart';
+import 'package:task_manager_app/blocs/tasks/task_state.dart';
 import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
-import 'package:task_manager_app/data/models/task.dart';
 import 'package:task_manager_app/data/repositories/task_repository.dart';
 
-// Events
-abstract class TaskEvent extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-class FetchTasksEvent extends TaskEvent {}
-
-class AddTaskEvent extends TaskEvent {
-  final Task task;
-
-  AddTaskEvent(this.task);
-
-  @override
-  List<Object?> get props => [task];
-}
-
-class UpdateTaskEvent extends TaskEvent {
-  final Task task;
-
-  UpdateTaskEvent(this.task);
-
-  @override
-  List<Object?> get props => [task];
-}
-
-class RemoveTaskEvent extends TaskEvent {
-  final int id;
-  final int userId;
-
-  RemoveTaskEvent(this.id, this.userId);
-
-  @override
-  List<Object?> get props => [id, userId];
-}
-
-// States
-class TaskState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-class TaskInitial extends TaskState {}
-
-class TaskLoading extends TaskState {}
-
-class TaskLoaded extends TaskState {
-  final List<Task> tasks;
-
-  TaskLoaded(this.tasks);
-
-  @override
-  List<Object?> get props => [tasks];
-}
-
-class TaskError extends TaskState {
-  final String error;
-
-  TaskError(this.error);
-
-  @override
-  List<Object?> get props => [error];
-}
 
 // Bloc
 class TaskBloc extends Bloc<TaskEvent, TaskState> {

@@ -20,4 +20,8 @@ class SharedPrefsHelper {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userId);
   }
+
+  getUserName() {}
+
+  getUserEmail() {}
 }

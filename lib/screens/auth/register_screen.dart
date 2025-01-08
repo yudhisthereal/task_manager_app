@@ -1,6 +1,8 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_manager_app/blocs/auth/auth_event.dart';
+import 'package:task_manager_app/blocs/auth/auth_state.dart';
 import '../../blocs/auth/auth_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {

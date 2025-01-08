@@ -1,70 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:task_manager_app/blocs/auth/auth_event.dart';
+import 'package:task_manager_app/blocs/auth/auth_state.dart';
 import 'package:task_manager_app/data/local/shared_prefs_helper.dart';
 import '../../data/repositories/auth_repository.dart';
-
-// Events
-abstract class AuthEvent extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-class RegisterEvent extends AuthEvent {
-  final String email;
-  final String password;
-
-  RegisterEvent(this.email, this.password);
-
-  @override
-  List<Object?> get props => [email, password];
-}
-
-class LoginEvent extends AuthEvent {
-  final String email;
-  final String password;
-
-  LoginEvent(this.email, this.password);
-
-  @override
-  List<Object?> get props => [email, password];
-}
-
-class LogoutEvent extends AuthEvent {}
-
-class ResetPasswordEvent extends AuthEvent {
-  final String email;
-  final String newPassword;
-
-  ResetPasswordEvent(this.email, this.newPassword);
-
-  @override
-  List<Object?> get props => [email, newPassword];
-}
-
-// States
-abstract class AuthState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-class AuthFailure extends AuthState {
-  final String message;
-
-  AuthFailure(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class LoginSuccess extends AuthState {}
-class RegistrationSuccess extends AuthState {}
-class ResetPasswordSuccess extends AuthState {}
-class LogoutSuccess extends AuthState {}
-
 
 // BLoC
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
