@@ -1,7 +1,3 @@
-Here's the updated `README.md` with your contact information added at the end:
-
----
-
 # Task Manager App 📋✅
 
 A task management app built using **Flutter** and **Bloc**, designed to help users manage their tasks in a simple and effective way. Users can sign up, log in, add/edit tasks, mark tasks as completed, and delete tasks. This app provides a personalized experience by displaying the user's name, email, and avatar at the top of the task list. 🎯
