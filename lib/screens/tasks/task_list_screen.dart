@@ -69,6 +69,9 @@ class TaskListScreenState extends State<TaskListScreen> {
               itemBuilder: (context, index) {
                 final task = tasks[index];
                 return ListTile(
+                  leading: Text(
+                    '${index+1}.',
+                    style: const TextStyle(fontSize: 16)),
                   title: Text(task.title),
                   subtitle: Text(task.description ?? ''),
                   trailing: Row(
