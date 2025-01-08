@@ -37,12 +37,6 @@ class TaskListScreenState extends State<TaskListScreen> {
             ),
           ),
           IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/add-edit-task');
-            },
-            icon: const Icon(Icons.add),
-          ),
-          IconButton(
             onPressed: () async {
               context.read<AuthBloc>().add(LogoutEvent());
               Navigator.pushReplacementNamed(context, '/login');
@@ -70,8 +64,9 @@ class TaskListScreenState extends State<TaskListScreen> {
                 final task = tasks[index];
                 return ListTile(
                   leading: Text(
-                    '${index+1}.',
-                    style: const TextStyle(fontSize: 16)),
+                    '${index + 1}.',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                   title: Text(task.title),
                   subtitle: Text(task.description ?? ''),
                   trailing: Row(
@@ -110,6 +105,14 @@ class TaskListScreenState extends State<TaskListScreen> {
             return const SizedBox.shrink();
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/add-edit-task');
+        },
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
       ),
     );
   }
