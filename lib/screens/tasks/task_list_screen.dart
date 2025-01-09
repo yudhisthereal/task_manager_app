@@ -4,6 +4,8 @@ import 'package:task_manager_app/blocs/auth/auth_bloc.dart';
 import 'package:task_manager_app/blocs/auth/auth_event.dart'
   show LogoutEvent;
 import 'package:task_manager_app/blocs/tasks/task_bloc.dart';
+import 'package:task_manager_app/blocs/tasks/task_event.dart';
+import 'package:task_manager_app/blocs/tasks/task_state.dart';
 import 'package:task_manager_app/data/models/task.dart';
 
 class TaskListScreen extends StatefulWidget {
